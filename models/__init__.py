@@ -1,1 +1,1 @@
-from .fc8 import *
+from models.fc import *

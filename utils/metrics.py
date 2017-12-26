@@ -27,10 +27,10 @@ def psnr_accuracy(output, target):
     pix_elements = output[0, 0, 0].flatten().shape
     avg_psnr = 0
     for batch in range(target.shape[0]):
-        for slice in range(target.shape[1]):
+        for video_slice in range(target.shape[1]):
             for frame in range(target.shape[2]):
-                mse = np.sum(((output[batch, slice, frame].flatten(
-                ) - target[batch, slice, frame].flatten()) ** 2)) / pix_elements
+                mse = np.sum(((output[batch, video_slice, frame].flatten(
+                ) - target[batch, video_slice, frame].flatten()) ** 2)) / pix_elements
                 psnr = 10 * log10(1 / mse)
                 avg_psnr += psnr
 
