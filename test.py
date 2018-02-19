@@ -25,7 +25,7 @@ parser.add_argument('layers_k', type=int, default=7,
                     help='number of FC layers in decoder')
 parser.add_argument('pretrained_net', help='pre-trained model path'),
 parser.add_argument('--block_opts', type=int, nargs='+',
-                    help='Item order: (temporal size, spatial size, video chunks)', default=[16, 8, 1])
+                    help='Item order: (temporal size, spatial size, video chunks)', default=[16, 8, 2])
 parser.add_argument('--block_overlap', action='store_false',
                     help='overlapping blocks or not')
 parser.add_argument('--noise', type=int,
