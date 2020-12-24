@@ -15,7 +15,7 @@ In Elsevier Digital Signal Processing, 2018.  (* equal contributions)
 
 ## Prerequisites
 - Linux or MacOS
-- Python 2
+- Python 3
 - NVIDIA GPU + CUDA CuDNN
 
 
@@ -32,6 +32,9 @@ Install all requirements below (with pip or conda)
 - h5py (http://www.h5py.org/)
 - pandas (https://pandas.pydata.org/)
 - bokeh (https://bokeh.pydata.org/en/latest/)
+
+### Tested environment
+The repo has been tested on Ubuntu 18.04, Python 3.9.1, PyTorch 1.7.1 and CUDA 11.0
 
 
 ### Clone this repo

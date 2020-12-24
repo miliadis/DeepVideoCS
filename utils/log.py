@@ -5,6 +5,7 @@ import logging.config
 import shutil
 import pandas as pd
 import imageio
+import numpy as np
 from bokeh.io import output_file, save, show
 from bokeh.plotting import figure
 from bokeh.layouts import column
@@ -105,6 +106,8 @@ def results_add(epoch, results, train_loss, psnr):
 
 def write_video(path, idx, video_data, video_format):
     save_path = path + '/' + idx.split('.')[0] + '.' + video_format
+    # Convert form float32 to uint8
+    video_data = (video_data * 255).astype(np.uint8)
     imageio.mimwrite(save_path, video_data, fps=30)
 
 

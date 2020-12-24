@@ -12,5 +12,5 @@ class EuclideanDistance(_LossFunctions):
         self.batch_size = batch_size
 
     def compute_loss(self, input, target):
-        loss = F.mse_loss(input, target, size_average=False)
+        loss = F.mse_loss(input, target, reduction='sum')
         return loss / (2 * self.batch_size)

@@ -85,7 +85,7 @@ def main():
 
     end = time.time()
     for i, (video_frames, pad_frame_size, patch_shape) in enumerate(test_loader):
-        video_input = Variable(video_frames.cuda(async=True), volatile=True)
+        video_input = video_frames.cuda()
         print(test_loader.dataset.videos[i])
 
         # compute output
