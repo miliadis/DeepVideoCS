@@ -82,7 +82,7 @@ class ResultsLog(object):
         for yi in y:
             f.line(self.results[x], self.results[yi],
                    line_width=line_width,
-                   line_color=next(colors), legend=yi)
+                   line_color=next(colors), legend_label=yi)
         self.figures.append(f)
 
     def image(self, *kargs, **kwargs):
