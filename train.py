@@ -100,7 +100,7 @@ def main():
     block_opts.append(args.block_overlap)
 
     time_stamp = datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
-    if args.save is '':
+    if args.save == '':
         args.save = time_stamp
     save_path = os.path.join(args.results_dir, args.save)
     if not os.path.exists(save_path):
@@ -203,8 +203,7 @@ def main():
     else:
         # binarize weights
         model.module.measurements.binarization()
-        perc_1 = model.module.measurements.weight.clone().mean().cpu().data.numpy()[
-            0]
+        perc_1 = model.module.measurements.weight.clone().mean().cpu().item()
         logging.info('Percentage of 1: {}'.format(perc_1))
 
     # perform first validation
@@ -212,10 +211,7 @@ def main():
 
     for epoch in range(args.start_epoch, args.epochs):
 
-        # Annual schedule enforcement
-        scheduler.step()
-
-        logging.info(scheduler.get_lr())
+        logging.info(scheduler.get_last_lr())
 
         if encoder_learn:
             save_binary_weights_before = binarization(
@@ -225,16 +221,19 @@ def main():
         train_loss = train(train_loader, model, optimizer, epoch,
                            mseloss, encoder_learn, args.gradient_clipping)
 
+        # Annual schedule enforcement
+        scheduler.step()
+
         if encoder_learn:
             save_binary_weights_after = binarization(
                 model.module.measurements.weight.clone())
             diff = np.int(torch.abs(save_binary_weights_after -
                                     save_binary_weights_before).sum().cpu().data.numpy())
-            perc_1 = save_binary_weights_after.mean().cpu().data.numpy()[0]
+            perc_1 = save_binary_weights_after.mean().cpu().item()
             logging.info(
                 'Binary Weights Changed: {} - Percentage of 1: {}'.format(diff, perc_1))
         else:
-            perc1 = model.module.measurements.weight.clone().mean().cpu().data.numpy()[0]
+            perc1 = model.module.measurements.weight.clone().mean().cpu().item()
             logging.info('Percentage of 1: {}'.format(perc_1))
 
         # evaluate on validation set
@@ -277,7 +276,7 @@ def train(train_loader, model, optimizer, epoch, mseloss, encoder_learn, gradien
         # measure data loading time
         data_time.update(time.time() - end)
 
-        target = video_blocks.cuda(async=True)
+        target = video_blocks.cuda()
         input_var = Variable(video_blocks.cuda())
         target_var = Variable(target)
 
@@ -291,7 +290,7 @@ def train(train_loader, model, optimizer, epoch, mseloss, encoder_learn, gradien
         output, y = model(input_var)
         loss = mseloss.compute_loss(output, target_var)
         # record loss
-        losses.update(loss.data[0], video_blocks.size(0))
+        losses.update(loss.item(), video_blocks.size(0))
 
         # compute gradient and do SGD step
         optimizer.zero_grad()
@@ -300,9 +299,9 @@ def train(train_loader, model, optimizer, epoch, mseloss, encoder_learn, gradien
         if encoder_learn:
             # restore real-valued weights
             model.module.measurements.restore()
-            nn.utils.clip_grad_norm(model.module.parameters(), gradient_clip)
+            nn.utils.clip_grad_norm_(model.module.parameters(), gradient_clip)
         else:
-            nn.utils.clip_grad_norm(
+            nn.utils.clip_grad_norm_(
                 model.module.reconstruction.parameters(), gradient_clip)
 
         optimizer.step()
@@ -335,7 +334,7 @@ def validate(val_loader, model, encoder_learn):
 
     end = time.time()
     for i, (video_frames, pad_frame_size, patch_shape) in enumerate(val_loader):
-        video_input = Variable(video_frames.cuda(async=True), volatile=True)
+        video_input = video_frames.cuda()
         print(val_loader.dataset.videos[i])
 
         # compute output

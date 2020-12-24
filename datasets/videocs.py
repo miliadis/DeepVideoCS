@@ -46,7 +46,7 @@ def make_video_blocks(video, chunks, t_frames):
 
 def default_loader(path):
     reader = imageio.get_reader(path)
-    video = np.zeros((reader._meta['nframes'], reader._meta['size']
+    video = np.zeros((reader.count_frames(), reader._meta['size']
                       [1], reader._meta['size'][0]), dtype=np.uint8)
     for i, im in enumerate(reader):
         video[i, :, :] = im.mean(2)

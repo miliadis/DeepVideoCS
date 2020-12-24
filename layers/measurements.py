@@ -61,7 +61,7 @@ class Measurements(nn.Module):
         self.weight.data.copy_(bernoulli_weights)
 
     def binarization(self):
-        self.weight.data.clamp(-1.0, 1.0, out=self.weight.data)
+        self.weight.data = self.weight.data.clamp(-1.0, 1.0)
         self.save_weight.copy_(self.weight.data)
         self.weight.data = 0.5 * (self.weight.data.sign() + 1)
         self.weight.data[self.weight.data == 0.5] = 1
